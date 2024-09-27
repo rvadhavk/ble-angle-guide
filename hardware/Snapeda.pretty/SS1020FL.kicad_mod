@@ -1,0 +1,141 @@
+(footprint "SS1020FL"
+	(version 20240108)
+	(generator "pcbnew")
+	(generator_version "8.0")
+	(layer "F.Cu")
+	(property "Reference" "REF**"
+		(at 0 -0.5 0)
+		(unlocked yes)
+		(layer "F.SilkS")
+		(uuid "d2d29685-3155-46a6-8e97-00e462bb8fc0")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.1)
+			)
+		)
+	)
+	(property "Value" "SS1020FL"
+		(at 0 1 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "364d381a-8043-490d-9d22-cc7a2d488127")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Footprint" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "a526cc44-332e-4425-bcd6-df34d29b934b")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "0bc46149-bf42-42dd-80fd-b14d2dcade75")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" "Schottky Diode"
+		(at 0 0 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "98c853e4-782d-4b1e-841d-ad52bb150859")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -2.4 -0.5)
+		(end -2.4 0.5)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.SilkS")
+		(uuid "09242c17-5fa4-4425-9efc-bd47fa75fe1d")
+	)
+	(fp_rect
+		(start -1.85 -0.55)
+		(end -1.1 0.55)
+		(stroke
+			(width 0.0254)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "5968e7b5-1e25-4def-8a97-54ad3cbf5d65")
+	)
+	(fp_rect
+		(start -1.4 -0.95)
+		(end 1.5 0.95)
+		(stroke
+			(width 0.0254)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "1804ff4e-21e5-4052-a9c0-0fa6645cd43f")
+	)
+	(fp_rect
+		(start 1.1 -0.55)
+		(end 1.85 0.55)
+		(stroke
+			(width 0.0254)
+			(type solid)
+		)
+		(fill none)
+		(layer "F.Fab")
+		(uuid "b5a13172-f1a7-4c98-ac0a-f1a8cd844382")
+	)
+	(fp_text user "${REFERENCE}"
+		(at 0 2.5 0)
+		(unlocked yes)
+		(layer "F.Fab")
+		(uuid "f24a604e-954c-4a40-ac1c-f93f77417963")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
+	(pad "1" smd roundrect
+		(at -1.55 0)
+		(size 1.15 1.22)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "f2bede0b-c379-45b1-9147-880117b8de6b")
+	)
+	(pad "2" smd roundrect
+		(at 1.55 0)
+		(size 1.15 1.22)
+		(layers "F.Cu" "F.Paste" "F.Mask")
+		(roundrect_rratio 0.25)
+		(thermal_bridge_angle 45)
+		(uuid "c52b7d0b-a9ba-4987-895c-cb79f092c401")
+	)
+)
