@@ -1,0 +1,1 @@
+cargo flash --release --chip nRF52840_xxAA
