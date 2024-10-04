@@ -1,16 +1,248 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <script defer>
+    <title>BLE Angle Guide</title>
+    <style>
+        html, body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 20px;
+            font-weight: lighter;
+            gap: 1vh;
+            font-family: Helvetica, sans-serif;
+            box-sizing: border-box;
+        }
 
-    </script>
+        svg {
+            max-width: 800px;
+        }
+
+        button {
+            background-color: teal;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            border: none;
+        }
+
+        button:hover, button:active {
+            filter: saturate(150%);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        button.disconnect {
+            color: red;
+            outline: 1px solid red;
+            background-color: white;
+        }
+        #connection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #connection-failed {
+            color: red;
+            font-size: 0.8em;
+            display: none;
+        }
+    </style>
 </head>
+
 <body>
-    <button>Connect</button>
-    <input id="angle" type="range" min="0" max="45" value="20" />
-   <canvas width="800" height="800"></canvas> 
+    <svg viewBox="-120 -110 240 130">
+        <defs>
+            <radialGradient id="radial-fade">
+                <stop offset="0%" stop-color="white" />
+                <stop offset="100%" stop-color="white" stop-opacity="0"/>
+            </radialGradient>
+        </defs>
+        <g transform="scale(1, -1)">
+            <!-- todo: center around the dot -->
+            <polyline id="actual-angle-history" stroke="salmon" stroke-width="1" stroke-linecap="round" fill="none" />
+            <circle cx="0" cy="0" r="25" fill="url(#radial-fade)" />
+            <text id="actual-angle-text" transform="scale(1, -1)" x="0" y="0" text-anchor="middle" font-size="30"
+                fill="black">
+                0.0°
+            </text>
+            <path id="dial-arc" d="M -100 0 A 100 100 0 0 0 100 0" fill="none" stroke="black" stroke-width="2" stroke-linecap="round"/>
+            <g id="actual-angle-indicator" transform="rotate(45)">
+                <circle cx="100" cy="0" r="5" fill="salmon" />
+            </g>
+            <g id="target-angle-indicator-rotation">
+                <g id="target-angle-indicator-translation" transform="translate(101)">
+                    <polyline points="-30,0 0,0" stroke="teal" stroke-width="0.5" fill="none" />
+                    <text id="target-angle-indicator-text" x="2" y="-5" text-anchor="start" font-size="7" fill="black"
+                        transform="scale(1, -1)">0.0°</text>
+                        <circle cx="5" cy="0" r="5" fill="transparent" />
+                        <path id="target-angle-indicator-arrow" d="M 0,0 l 10,3 l 0,-6 Z" fill="teal" />
+                </g>
+            </g>
+        </g>
+    </svg>
+    <div id="connection">
+        <button id="connectBtn">Connect</button>
+        <div id="connection-failed">Failed to connect</div>
+    </div>
+    <script>
+        let targetAngle = degreesToRadians(20);
+        setTargetAngle(degreesToRadians(20));
+        setActualAngleIndicatorAndText(null);
+
+        const svg = document.querySelector('svg');
+        const targetAngleIndicator = document.querySelector('#target-angle-indicator-rotation');
+        let dragging = false;
+        targetAngleIndicator.addEventListener('mousedown', e => {
+            // Prevent text highlighting when dragging the indicator.
+            e.preventDefault();
+            console.log('mousedown');
+            dragging = true;
+        });
+        window.addEventListener('mouseup', e => {
+            console.log('mouseup');
+            dragging = false;
+        });
+        window.addEventListener('mousemove', e => {
+            if (!dragging) {
+                return;
+            }
+            const pathRect = document.getElementById('dial-arc').getBoundingClientRect();
+            const pathBottomMid = {
+                x: pathRect.left + pathRect.width / 2,
+                y: pathRect.bottom
+            };
+            const dx = e.clientX - pathBottomMid.x;
+            const dy = pathBottomMid.y - e.clientY;
+            const angle = Math.atan2(dy, dx);
+            const clampedAngle = angle >= 0 ? angle : (angle >= -Math.PI/2 ? 0 : Math.PI);
+            console.log(radiansToDegrees(angle));
+            setTargetAngle(clampedAngle);
+        });
+        function degreesToRadians(degrees) {
+            return degrees / 180 * Math.PI;
+        }
+
+        function radiansToDegrees(radians) {
+            return radians / Math.PI * 180;
+        }
+
+        function setTargetAngle(angle) {
+            let degrees = radiansToDegrees(angle);
+            degrees = Math.round(degrees * 2) / 2;
+            angle = degreesToRadians(degrees);
+            document.getElementById('target-angle-indicator-rotation').style.transform =
+                `rotate(${angle}rad)`;
+            document.getElementById('target-angle-indicator-text').textContent = `${radiansToDegrees(angle).toFixed(1)}°`;
+            targetAngle = angle;
+        }
+
+        function normalizeAngle(angle) {
+            return Math.abs(angle);
+        }
+        function setActualAngleIndicatorAndText(angle) {
+            const indicator = document.getElementById('actual-angle-indicator');
+            const text = document.getElementById('actual-angle-text');
+            if (angle === null) {
+                indicator.style.transform = `rotate(0rad)`;
+                text.textContent = `--.-°`;
+            } else {
+                indicator.style.transform =
+                    `rotate(${angle}rad)`;
+                text.textContent = `${radiansToDegrees(Math.PI / 2 - Math.abs(angle - Math.PI / 2)).toFixed(1)}°`;
+            }
+        }
+
+        setButtonToConnect();
+
+        const button = document.getElementById('connectBtn');
+        function setButtonToConnect() {
+            button.textContent = 'Connect';
+            button.classList.remove('disconnect');
+            button.onclick = connectBLE;
+        }
+
+        function setButtonToDisconnect() {
+            button.textContent = 'Disconnect';
+            button.classList.add('disconnect');
+            button.onclick = disconnectBLE;
+        }
+
+        let angleSamples = [];
+        let gattServer = null;
+        async function disconnectBLE() {
+            if (gattServer) {
+                await gattServer.disconnect();
+                gattServer = null;
+            }
+            setActualAngleIndicatorAndText(null);
+            angleSamples = [];
+            setButtonToConnect();
+        }
+
+        async function connectBLE(bluetoothState) {
+            try {
+                document.getElementById('connection-failed').style.removeProperty('display');
+                const SERVICE_UUID = 'b3f787c6-77c9-49c1-bd93-3692eb94d2ca';
+                const ANGLE_CHARACTERISTIC_UUID = '6ec6e014-9fe0-4e14-97a1-bbf221d19dec';
+                const device = await navigator.bluetooth.requestDevice({
+                    filters: [{ services: [SERVICE_UUID] }]
+                });
+                gattServer = await device.gatt.connect();
+                setButtonToDisconnect();
+                device.addEventListener('gattserverdisconnected', e => {
+                    setButtonToConnect();
+                });
+                const service = await gattServer.getPrimaryService(SERVICE_UUID);
+                const angleCharacteristic = await service.getCharacteristic(ANGLE_CHARACTERISTIC_UUID);
+                angleCharacteristic.addEventListener('characteristicvaluechanged', e => {
+                    const dataView = e.target.value;
+                    const [x, y, z] = [0, 2, 4].map(i => dataView.getInt16(i, true) / 16384);
+                    angleSamples.push(normalizeAngle(Math.atan2(x, z)));
+                    angleSamples = angleSamples.slice(-100);
+                    const smoothedSamples = exponentialMovingAverage(angleSamples, 0.3);
+                    function pointForAngle(angle, idx) {
+                        const r = 100 * Math.pow((101 - idx) / 100, 2);
+                        const x = r * Math.cos(angle);
+                        const y = r * Math.sin(angle);
+                        return `${x},${y}`;
+                    }
+                    document.getElementById('actual-angle-history')
+                        .setAttribute('points', smoothedSamples.toReversed().map(pointForAngle));
+                    setActualAngleIndicatorAndText(smoothedSamples.at(-1));
+                });
+                angleCharacteristic.startNotifications();
+            } catch (e) {
+                document.getElementById('connection-failed').style.display = 'unset';
+                console.error(e);
+                setButtonToConnect();
+            }
+        }
+
+        function exponentialMovingAverage(samples, alpha) {
+            let result = [];
+            for (let x of samples) {
+                if (result.length === 0) {
+                    result.push(x);
+                } else {
+                    result.push(alpha * x + (1 - alpha) * result.at(-1));
+                }
+            }
+            return result;
+        }
+    </script>
 </body>
+
 </html>
