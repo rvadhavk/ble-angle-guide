@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -66,10 +65,16 @@
             font-size: 0.8em;
             display: none;
         }
+
+        #noscript {
+            margin-left: 20px;
+            margin-right: 20px;
+        }
     </style>
 </head>
 
 <body>
+    <noscript><div id="noscript">This page uses JavaScript to connect a sensor using WebBluetooth and update the display using that sensor data.</div></noscript>
     <svg viewBox="-120 -110 240 130">
         <defs>
             <radialGradient id="radial-fade">
