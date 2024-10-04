@@ -17,10 +17,10 @@
             justify-content: center;
             align-items: center;
             padding-bottom: 20px;
-            font-weight: lighter;
-            gap: 1vh;
-            font-family: Helvetica, sans-serif;
+            /* keeps the padding-bottom from causing the body to overflow the viewport */
             box-sizing: border-box;
+            font-weight: lighter;
+            font-family: Helvetica, sans-serif;
         }
 
         svg {
@@ -49,11 +49,13 @@
             outline: 1px solid red;
             background-color: white;
         }
+
         #connection {
             display: flex;
             flex-direction: column;
             align-items: center;
         }
+
         #connection-failed {
             color: red;
             font-size: 0.8em;
@@ -71,8 +73,8 @@
             </radialGradient>
         </defs>
         <g transform="scale(1, -1)">
-            <!-- todo: center around the dot -->
             <polyline id="actual-angle-history" stroke="salmon" stroke-width="1" stroke-linecap="round" fill="none" />
+            <!-- this circle is for fading out the angle history plot as it reaches the center -->
             <circle cx="0" cy="0" r="25" fill="url(#radial-fade)" />
             <text id="actual-angle-text" transform="scale(1, -1)" x="0" y="0" text-anchor="middle" font-size="30"
                 fill="black">
@@ -131,6 +133,7 @@
             console.log(radiansToDegrees(angle));
             setTargetAngle(clampedAngle);
         });
+
         function degreesToRadians(degrees) {
             return degrees / 180 * Math.PI;
         }
@@ -152,6 +155,7 @@
         function normalizeAngle(angle) {
             return Math.abs(angle);
         }
+
         function setActualAngleIndicatorAndText(angle) {
             const indicator = document.getElementById('actual-angle-indicator');
             const text = document.getElementById('actual-angle-text');
