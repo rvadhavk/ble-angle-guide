@@ -1,4 +1,5 @@
 # BLE Angle Guide
+<img src="https://github.com/rvadhavk/ble-angle-guide/blob/main/screenshot.png?raw=true" width="400" alt="screnshot of the gui showing angle readings"/>
 This project is my attempt to create a BLE knife sharpening angle guide/sensor that magnetically clips onto the side of your knife. The UI is a webpage which talks to the sensor using WebBluetooth. The hardware is a custom PCB based around a Panasonic nRF52840 module. The firmware is implemented in Rust using [Embassy](https://github.com/embassy-rs/embassy).  It's my first foray into embedded systems, so the PCB design is probably terrible.
 
 ## Project Structure
