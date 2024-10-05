@@ -131,12 +131,10 @@
             indicator.addEventListener('mousedown', e => {
                 // Prevent text highlighting when dragging the indicator.
                 e.preventDefault();
-                console.log('mousedown');
                 draggedIndicator = side;
             });
         }
         window.addEventListener('mouseup', e => {
-            console.log('mouseup');
             draggedIndicator = null;
         });
         window.addEventListener('mousemove', e => {
@@ -247,7 +245,9 @@
                 angleCharacteristic.addEventListener('characteristicvaluechanged', e => {
                     const dataView = e.target.value;
                     const [x, y, z] = [0, 2, 4].map(i => dataView.getInt16(i, true) / 16384);
-                    angleSamples.push(normalizeAngle(Math.atan2(x, z)));
+                    let normalizedZ = z / Math.sqrt(x*x + y*y + z*z);
+                    //angleSamples.push(normalizeAngle(Math.atan2(x, z)));
+                    angleSamples.push(Math.acos(normalizedZ));
                     angleSamples = angleSamples.slice(-100);
                     const smoothedSamples = exponentialMovingAverage(angleSamples, 0.3);
                     function pointForAngle(angle, idx) {
