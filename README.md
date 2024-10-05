@@ -16,3 +16,7 @@ To flash the device, run `sh flash.sh` from the `firmware` directory.
 
 ## UI
 The UI is just a single [index.html](./ui/index.html) file.  WebBluetooth requires an https connection, so [development-server.py](./ui/development-server.py) is included for running a simple HTTP server with TLS support.  It requires that `mkcert` be installed or that you manually generate `cert.pem` and `key.pem`.
+
+## Known Issues
+- On/off button logic hasn't been implemented yet in the firmware
+- USB connector is currently unused in firmware
